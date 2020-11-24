@@ -6,6 +6,7 @@ import unittest
 from unittest import mock
 
 from test import support
+from test.support import os_helper
 
 
 class PlatformTest(unittest.TestCase):
@@ -17,7 +18,7 @@ class PlatformTest(unittest.TestCase):
     def test_architecture(self):
         res = platform.architecture()
 
-    @support.skip_unless_symlink
+    @os_helper.skip_unless_symlink
     def test_architecture_via_symlink(self): # issue3762
         with support.PythonSymlink() as py:
             cmd = "-c", "import platform; print(platform.architecture())"
@@ -195,7 +196,7 @@ class PlatformTest(unittest.TestCase):
         # using it, per
         # http://blogs.msdn.com/david.wang/archive/2006/03/26/HOWTO-Detect-Process-Bitness.aspx
         try:
-            with support.EnvironmentVarGuard() as environ:
+            with os_helper.EnvironmentVarGuard() as environ:
                 if 'PROCESSOR_ARCHITEW6432' in environ:
                     del environ['PROCESSOR_ARCHITEW6432']
                 environ['PROCESSOR_ARCHITECTURE'] = 'foo'
@@ -237,7 +238,10 @@ class PlatformTest(unittest.TestCase):
             # On Snow Leopard, sw_vers reports 10.6.0 as 10.6
             if len_diff > 0:
                 expect_list.extend(['0'] * len_diff)
-            self.assertEqual(result_list, expect_list)
+            # For compatibility with older binaries, macOS 11.x may report
+            # itself as '10.16' rather than '11.x.y'.
+            if result_list != ['10', '16']:
+                self.assertEqual(result_list, expect_list)
 
             # res[1] claims to contain
             # (version, dev_stage, non_release_version)
@@ -245,7 +249,7 @@ class PlatformTest(unittest.TestCase):
             self.assertEqual(res[1], ('', '', ''))
 
             if sys.byteorder == 'little':
-                self.assertIn(res[2], ('i386', 'x86_64'))
+                self.assertIn(res[2], ('i386', 'x86_64', 'arm64'))
             else:
                 self.assertEqual(res[2], 'PowerPC')
 
@@ -281,8 +285,8 @@ class PlatformTest(unittest.TestCase):
             executable = sys.executable
         platform.libc_ver(executable)
 
-        filename = support.TESTFN
-        self.addCleanup(support.unlink, filename)
+        filename = os_helper.TESTFN
+        self.addCleanup(os_helper.unlink, filename)
 
         with mock.patch('os.confstr', create=True, return_value='mock 1.0'):
             # test os.confstr() code path

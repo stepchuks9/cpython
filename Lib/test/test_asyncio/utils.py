@@ -34,6 +34,7 @@ from asyncio import futures
 from asyncio import tasks
 from asyncio.log import logger
 from test import support
+from test.support import threading_helper
 
 
 def data_file(filename):
@@ -545,8 +546,22 @@ class TestCase(unittest.TestCase):
 
     def setUp(self):
         self._get_running_loop = events._get_running_loop
-        events._get_running_loop = lambda: None
-        self._thread_cleanup = support.threading_setup()
+
+        def _get_running_loop():
+            frame = sys._getframe(1)
+
+            if frame.f_globals['__name__'] == 'asyncio.mixins':
+                # When we called from LoopBoundedMixin we should
+                # fallback to default implementation of get_running_loop
+                try:
+                    return events.get_running_loop()
+                except RuntimeError:
+                    return None
+
+            return None
+
+        events._get_running_loop = _get_running_loop
+        self._thread_cleanup = threading_helper.threading_setup()
 
     def tearDown(self):
         self.unpatch_get_running_loop()
@@ -558,7 +573,7 @@ class TestCase(unittest.TestCase):
         self.assertEqual(sys.exc_info(), (None, None, None))
 
         self.doCleanups()
-        support.threading_cleanup(*self._thread_cleanup)
+        threading_helper.threading_cleanup(*self._thread_cleanup)
         support.reap_children()
 
 

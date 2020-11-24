@@ -271,6 +271,27 @@ _asyncio_Future_get_loop(FutureObj *self, PyObject *Py_UNUSED(ignored))
     return _asyncio_Future_get_loop_impl(self);
 }
 
+PyDoc_STRVAR(_asyncio_Future__make_cancelled_error__doc__,
+"_make_cancelled_error($self, /)\n"
+"--\n"
+"\n"
+"Create the CancelledError to raise if the Future is cancelled.\n"
+"\n"
+"This should only be called once when handling a cancellation since\n"
+"it erases the context exception value.");
+
+#define _ASYNCIO_FUTURE__MAKE_CANCELLED_ERROR_METHODDEF    \
+    {"_make_cancelled_error", (PyCFunction)_asyncio_Future__make_cancelled_error, METH_NOARGS, _asyncio_Future__make_cancelled_error__doc__},
+
+static PyObject *
+_asyncio_Future__make_cancelled_error_impl(FutureObj *self);
+
+static PyObject *
+_asyncio_Future__make_cancelled_error(FutureObj *self, PyObject *Py_UNUSED(ignored))
+{
+    return _asyncio_Future__make_cancelled_error_impl(self);
+}
+
 PyDoc_STRVAR(_asyncio_Future__repr_info__doc__,
 "_repr_info($self, /)\n"
 "--\n"
@@ -334,84 +355,25 @@ exit:
     return return_value;
 }
 
-PyDoc_STRVAR(_asyncio_Task_current_task__doc__,
-"current_task($type, /, loop=None)\n"
+PyDoc_STRVAR(_asyncio_Task__make_cancelled_error__doc__,
+"_make_cancelled_error($self, /)\n"
 "--\n"
 "\n"
-"Return the currently running task in an event loop or None.\n"
+"Create the CancelledError to raise if the Task is cancelled.\n"
 "\n"
-"By default the current task for the current event loop is returned.\n"
-"\n"
-"None is returned when called not in the context of a Task.");
+"This should only be called once when handling a cancellation since\n"
+"it erases the context exception value.");
 
-#define _ASYNCIO_TASK_CURRENT_TASK_METHODDEF    \
-    {"current_task", (PyCFunction)(void(*)(void))_asyncio_Task_current_task, METH_FASTCALL|METH_KEYWORDS|METH_CLASS, _asyncio_Task_current_task__doc__},
+#define _ASYNCIO_TASK__MAKE_CANCELLED_ERROR_METHODDEF    \
+    {"_make_cancelled_error", (PyCFunction)_asyncio_Task__make_cancelled_error, METH_NOARGS, _asyncio_Task__make_cancelled_error__doc__},
 
 static PyObject *
-_asyncio_Task_current_task_impl(PyTypeObject *type, PyObject *loop);
+_asyncio_Task__make_cancelled_error_impl(TaskObj *self);
 
 static PyObject *
-_asyncio_Task_current_task(PyTypeObject *type, PyObject *const *args, Py_ssize_t nargs, PyObject *kwnames)
+_asyncio_Task__make_cancelled_error(TaskObj *self, PyObject *Py_UNUSED(ignored))
 {
-    PyObject *return_value = NULL;
-    static const char * const _keywords[] = {"loop", NULL};
-    static _PyArg_Parser _parser = {NULL, _keywords, "current_task", 0};
-    PyObject *argsbuf[1];
-    Py_ssize_t noptargs = nargs + (kwnames ? PyTuple_GET_SIZE(kwnames) : 0) - 0;
-    PyObject *loop = Py_None;
-
-    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 0, 1, 0, argsbuf);
-    if (!args) {
-        goto exit;
-    }
-    if (!noptargs) {
-        goto skip_optional_pos;
-    }
-    loop = args[0];
-skip_optional_pos:
-    return_value = _asyncio_Task_current_task_impl(type, loop);
-
-exit:
-    return return_value;
-}
-
-PyDoc_STRVAR(_asyncio_Task_all_tasks__doc__,
-"all_tasks($type, /, loop=None)\n"
-"--\n"
-"\n"
-"Return a set of all tasks for an event loop.\n"
-"\n"
-"By default all tasks for the current event loop are returned.");
-
-#define _ASYNCIO_TASK_ALL_TASKS_METHODDEF    \
-    {"all_tasks", (PyCFunction)(void(*)(void))_asyncio_Task_all_tasks, METH_FASTCALL|METH_KEYWORDS|METH_CLASS, _asyncio_Task_all_tasks__doc__},
-
-static PyObject *
-_asyncio_Task_all_tasks_impl(PyTypeObject *type, PyObject *loop);
-
-static PyObject *
-_asyncio_Task_all_tasks(PyTypeObject *type, PyObject *const *args, Py_ssize_t nargs, PyObject *kwnames)
-{
-    PyObject *return_value = NULL;
-    static const char * const _keywords[] = {"loop", NULL};
-    static _PyArg_Parser _parser = {NULL, _keywords, "all_tasks", 0};
-    PyObject *argsbuf[1];
-    Py_ssize_t noptargs = nargs + (kwnames ? PyTuple_GET_SIZE(kwnames) : 0) - 0;
-    PyObject *loop = Py_None;
-
-    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 0, 1, 0, argsbuf);
-    if (!args) {
-        goto exit;
-    }
-    if (!noptargs) {
-        goto skip_optional_pos;
-    }
-    loop = args[0];
-skip_optional_pos:
-    return_value = _asyncio_Task_all_tasks_impl(type, loop);
-
-exit:
-    return return_value;
+    return _asyncio_Task__make_cancelled_error_impl(self);
 }
 
 PyDoc_STRVAR(_asyncio_Task__repr_info__doc__,
@@ -870,4 +832,4 @@ _asyncio__leave_task(PyObject *module, PyObject *const *args, Py_ssize_t nargs, 
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=6ed4cfda8fc516ad input=a9049054013a1b77]*/
+/*[clinic end generated code: output=d0fc522bcbff9d61 input=a9049054013a1b77]*/
